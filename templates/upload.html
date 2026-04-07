@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Configuration</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-title">
+            <h2>Job Configuration</h2>
+            <span>Define requirements and upload resumes</span>
+        </div>
+
+        <!-- 🔹 ACTION BUTTONS -->
+        <div class="top-actions">
+            <a href="/history" class="btn-secondary">View History</a>
+            <a href="/logout" class="btn-secondary">Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="content-card">
+
+        <form method="post" action="/analyze" enctype="multipart/form-data">
+
+            <div class="form-grid">
+
+                <!-- Job Details -->
+                <div class="form-section">
+                    <h3>Job Details</h3>
+
+                    <label>Job Title</label>
+                    <input type="text" name="job_title"
+                           placeholder="e.g. Software Engineer" required>
+
+                    <label>Required Skills</label>
+                    <input type="text" name="skills"
+                           placeholder="Python, Machine Learning, SQL" required>
+
+                    <label>Minimum Years of Experience</label>
+                    <input type="number" name="min_experience" min="0" required>
+                </div>
+
+                <!-- Resume Upload -->
+                <div class="form-section">
+                    <h3>Upload Resumes</h3>
+
+                    <div class="upload-box">
+                        <p>Upload candidate resumes</p>
+                        <span>PDF, DOCX, PNG, JPG</span>
+                        <input type="file" name="resumes" multiple required>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    Analyze Candidates
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
