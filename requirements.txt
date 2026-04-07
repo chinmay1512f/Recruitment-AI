@@ -1,0 +1,13 @@
+flask
+flask_sqlalchemy
+werkzeug
+
+PyMuPDF
+python-docx
+pytesseract
+Pillow
+
+spacy
+scikit-learn
+sentence-transformers
+torch
