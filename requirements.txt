@@ -11,3 +11,8 @@ spacy
 scikit-learn
 sentence-transformers
 torch
+
+flask-mail
+gunicorn
+scikit-learn
+numpy
