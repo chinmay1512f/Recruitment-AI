@@ -1,18 +1,15 @@
 flask
 flask_sqlalchemy
 werkzeug
+gunicorn
+flask-mail
 
 PyMuPDF
 python-docx
 pytesseract
 Pillow
 
-spacy
+numpy
 scikit-learn
 sentence-transformers
 torch
-
-flask-mail
-gunicorn
-scikit-learn
-numpy
