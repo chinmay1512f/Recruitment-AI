@@ -608,49 +608,33 @@ def extract_skills_precise(resume_text, job_skills):
 
 def determine_proficiency(resume_text, skill):
     """Determine skill proficiency level from context"""
-    skill_pattern = r"\b" + re.escape(skill) + r"\b"
-    matches = list(re.finditer(skill_pattern, resume_text.lower()))
+    skill_lower = skill.lower()
+    resume_lower = resume_text.lower()
     
-    if not matches:
-        return 'beginner'
+    mentions = resume_lower.count(skill_lower)
     
-    contexts = []
-    for match in matches:
-        start = max(0, match.start() - 100)
-        end = min(len(resume_text), match.end() + 100)
-        contexts.append(resume_text[start:end].lower())
+    expertise_score = 0
+    context_window = 200
     
-    expert_indicators = ['expert', 'advanced', 'senior', 'lead', 'architect', 'specialist', '5+ years', '6+ years', '7+ years', '8+ years', '9+ years', '10+ years']
-    advanced_indicators = ['advanced', 'experienced', 'proficient', 'skilled', '4 years', '5 years', 'strong']
-    intermediate_indicators = ['intermediate', '3 years', '2+ years', 'familiar', 'working knowledge']
+    for match in re.finditer(r"\b" + re.escape(skill_lower) + r"\b", resume_lower):
+        start = max(0, match.start() - context_window)
+        end = min(len(resume_lower), match.end() + context_window)
+        context = resume_lower[start:end]
+        
+        if any(word in context for word in ['expert', 'advanced', 'senior', 'lead', 'architect']):
+            expertise_score += 25
+        elif any(word in context for word in ['intermediate', 'experienced', 'proficient']):
+            expertise_score += 15
+        elif any(word in context for word in ['beginner', 'basic', 'familiar']):
+            expertise_score += 5
     
-    all_context = ' '.join(contexts)
-    
-    years_pattern = r'(\d+)\+?\s*years?.*?' + re.escape(skill)
-    years_match = re.search(years_pattern, resume_text.lower())
-    
+    years_match = re.search(r'(\d+)\s*\+?\s*years?.*?' + re.escape(skill_lower), resume_lower)
     if years_match:
         years = int(years_match.group(1))
-        if years >= 5:
-            return 'expert'
-        elif years >= 3:
-            return 'advanced'
-        elif years >= 1:
-            return 'intermediate'
+        expertise_score += min(years * 5, 30)
     
-    for indicator in expert_indicators:
-        if indicator in all_context:
-            return 'expert'
-    
-    for indicator in advanced_indicators:
-        if indicator in all_context:
-            return 'advanced'
-    
-    for indicator in intermediate_indicators:
-        if indicator in all_context:
-            return 'intermediate'
-    
-    return 'beginner'
+    base_score = min(mentions * 10, 40)
+    return min(base_score + expertise_score, 100)
 
 
 def calculate_experience_score_improved(resume_text, min_years, job_title):
@@ -1698,6 +1682,8 @@ def logout():
     return redirect("/")
 
 
+# -------------------- UPDATED MAIN ENTRY POINT FOR RENDER --------------------
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
@@ -1709,4 +1695,6 @@ if __name__ == "__main__":
             ))
             db.session.commit()
 
-    app.run(debug=True)
+    # Render deployment: read PORT from environment
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
